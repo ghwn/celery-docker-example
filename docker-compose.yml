@@ -1,6 +1,6 @@
 services:
   rabbitmq:
-    image: rabbitmq:4
+    image: rabbitmq:4-management
     platform: linux/amd64
     environment:
       - RABBITMQ_DEFAULT_USER=rabbit
@@ -8,6 +8,7 @@ services:
       - RABBITMQ_DEFAULT_VHOST=/
     ports:
       - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
