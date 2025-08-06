@@ -72,7 +72,9 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     ports:
       - "5555:5555"
-    command: uv run celery -A app flower
+    volumes:
+      - celeryflower_data:/code/flower
+    command: uv run celery -A app flower --conf="./app/flowerconfig.py"
     restart: unless-stopped
     depends_on:
       rabbitmq:
@@ -84,3 +86,4 @@ volumes:
   rabbitmq_data:
   redis_data:
   celerybeat_data:
+  celeryflower_data:
