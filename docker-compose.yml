@@ -44,5 +44,22 @@ services:
       redis:
         condition: service_healthy
 
+  celery-beat:
+    build: .
+    platform: linux/amd64
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbit:rabbit@rabbitmq:5672/
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - celerybeat_data:/code/celery-beat
+    command: uv run celery -A app beat -s celery-beat/schedule -l INFO
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   rabbitmq_data:
+  celerybeat_data:
