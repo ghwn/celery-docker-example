@@ -24,6 +24,9 @@ services:
     platform: linux/amd64
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --appendfsync everysec --save 900 1
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -63,4 +66,5 @@ services:
 
 volumes:
   rabbitmq_data:
+  redis_data:
   celerybeat_data:
