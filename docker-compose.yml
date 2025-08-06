@@ -64,6 +64,22 @@ services:
       redis:
         condition: service_healthy
 
+  celery-flower:
+    build: .
+    platform: linux/amd64
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbit:rabbit@rabbitmq:5672/
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    command: uv run celery -A app flower
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   rabbitmq_data:
   redis_data:
