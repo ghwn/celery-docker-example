@@ -11,5 +11,12 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  celery-worker:
+    build: .
+    platform: linux/amd64
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbit:rabbit@rabbitmq:5672/
+    command: uv run celery -A app worker -l INFO
+
 volumes:
   rabbitmq_data:
