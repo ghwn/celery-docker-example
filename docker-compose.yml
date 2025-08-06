@@ -10,12 +10,25 @@ services:
       - "5672:5672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
   redis:
     image: redis:8
     platform: linux/amd64
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
 
   celery-worker:
     build: .
@@ -24,6 +37,12 @@ services:
       - CELERY_BROKER_URL=amqp://rabbit:rabbit@rabbitmq:5672/
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     command: uv run celery -A app worker -l INFO
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   rabbitmq_data:
