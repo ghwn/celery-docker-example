@@ -11,11 +11,18 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  redis:
+    image: redis:8
+    platform: linux/amd64
+    ports:
+      - "6379:6379"
+
   celery-worker:
     build: .
     platform: linux/amd64
     environment:
       - CELERY_BROKER_URL=amqp://rabbit:rabbit@rabbitmq:5672/
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     command: uv run celery -A app worker -l INFO
 
 volumes:
