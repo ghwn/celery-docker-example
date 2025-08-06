@@ -40,7 +40,7 @@ services:
     environment:
       - CELERY_BROKER_URL=amqp://rabbit:rabbit@rabbitmq:5672/
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    command: uv run celery -A app worker -l INFO
+    command: uv run celery -A app.celery worker -l INFO
     restart: unless-stopped
     depends_on:
       rabbitmq:
@@ -56,7 +56,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     volumes:
       - celerybeat_data:/code/celery-beat
-    command: uv run celery -A app beat -s celery-beat/schedule -l INFO
+    command: uv run celery -A app.celery beat -s celery-beat/schedule -l INFO
     restart: unless-stopped
     depends_on:
       rabbitmq:
@@ -74,7 +74,7 @@ services:
       - "5555:5555"
     volumes:
       - celeryflower_data:/code/flower
-    command: uv run celery -A app flower --conf="./app/flowerconfig.py"
+    command: uv run celery -A app.celery flower --conf="./app/celery/flowerconfig.py"
     restart: unless-stopped
     depends_on:
       rabbitmq:

@@ -16,7 +16,7 @@ timezone = "Asia/Seoul"
 
 beat_schedule = {
     "task-a": {
-        "task": "app.tasks.add",
+        "task": "app.celery.tasks.add",
         "args": (10, 20),
         "schedule": crontab(minute="*/1"),  # every minute
     },
